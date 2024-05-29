@@ -9,14 +9,14 @@ AUTH = Auth()
 app = Flask(__name__)
 
 
-@app.get('/')
+@app.route('/', methods=['GET'], strict_slashes=False)
 def bienveue():
     """Bienvenue
     """
     return jsonify({"message": "Bienvenue"})
 
 
-@app.post('/users')
+@app.route('/users', methods=['POST'], strict_slashes=False)
 def users() -> str:
     """POST /users
     """
