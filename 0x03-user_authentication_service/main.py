@@ -11,7 +11,8 @@ def register_user(email: str, password: str) -> None:
     Register a user
     """
     response = requests.post(
-        'http://localhost:5000/users', data={'email': email, 'password': password})
+        'http://localhost:5000/users',
+        data={'email': email, 'password': password})
     assert response.status_code == 200
 
 
@@ -20,7 +21,8 @@ def log_in_wrong_password(email: str, password: str) -> None:
     Login a user with wrong password
     """
     response = requests.post(
-        'http://localhost:5000/sessions', data={'email': email, 'password': 'wrongpassword'})
+        'http://localhost:5000/sessions',
+        data={'email': email, 'password': 'wrongpassword'})
     assert response.status_code == 401
 
 
@@ -28,7 +30,8 @@ def log_in(email: str, password: str) -> str:
     """Login a user
     """
     response = requests.post(
-        'http://localhost:5000/sessions', data={'email': email, 'password': password})
+        'http://localhost:5000/sessions',
+        data={'email': email, 'password': password})
     assert response.status_code == 200
     return response.cookies.get('session_id')
 
@@ -70,7 +73,9 @@ def update_password(email: str, reset_token: str, new_password: str) -> None:
     """Update password
     """
     response = requests.put(
-        'http://localhost:5000/reset_password', data={'email': email, 'reset_token': reset_token, 'new_password': new_password})
+        'http://localhost:5000/reset_password',
+        data={'email': email, 'reset_token': reset_token,
+              'new_password': new_password})
     assert response.status_code == 200
     assert response.json().get('message') == 'Password updated'
 
