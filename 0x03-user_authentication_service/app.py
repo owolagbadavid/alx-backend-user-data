@@ -53,8 +53,49 @@ def logout():
     user = AUTH.get_user_from_session_id(user_cookie)
     if user_cookie is None or user is None:
         abort(403)
-    AUTH.destroy_session(user.id)
+    AUTH.destroy_session(user_cookie)
     return redirect('/')
+
+
+@app.route('/profile', methods=['GET'], strict_slashes=False)
+def profile() -> str:
+    """
+    GET /profile
+    """
+    user_cookie = request.cookies.get("session_id", None)
+    user = AUTH.get_user_from_session_id(user_cookie)
+    if user_cookie is None or user is None:
+        abort(403)
+    return jsonify({"email": user}), 200
+
+
+@app.route('/reset_password', methods=['POST'], strict_slashes=False)
+def get_reset_password_token_route() -> str:
+    """
+    POST /reset_password
+    """
+    user_request = request.form
+    user_email = user_request.get('email', '')
+    is_registered = AUTH.create_session(user_email)
+    if not is_registered:
+        abort(403)
+    token = AUTH.get_reset_password_token(user_email)
+    return jsonify({"email": user_email, "reset_token": token})
+
+
+@app.route('/reset_password', methods=['PUT'], strict_slashes=False)
+def update_password() -> str:
+    """
+    PUT /reset_password
+    """
+    user_email = request.form.get('email')
+    reset_token = request.form.get('reset_token')
+    new_password = request.form.get('new_password')
+    try:
+        AUTH.update_password(reset_token, new_password)
+    except Exception:
+        abort(403)
+    return jsonify({"email": user_email, "message": "Password updated"}), 200
 
 
 if __name__ == "__main__":
